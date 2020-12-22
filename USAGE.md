@@ -62,7 +62,7 @@ This program will exit with one of the following exit codes:
 : General configuration error. See `stderr` for details.
 
 `2`
-: Could not read from `stdin` with `--wait`
+: Could not read from `stdin` with `--wait`.
 
 `3`
 : Could not write PID to `stdout` with `--pid`.
