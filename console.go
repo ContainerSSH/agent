@@ -3,22 +3,29 @@ package main
 import (
 	"encoding/binary"
 	"fmt"
+	"io"
 	"os"
 	"strings"
-	"syscall"
 )
 
-func console(args []string) {
+// execFunc is a function that replaces the current program image with the executed one. If only returns with an error
+// if the execution failed
+type execFunc func(argv0 string, argv []string, envv []string) (err error)
+
+// exitFunc exits the current program with the specified exit code.
+type exitFunc func(code int)
+
+func console(stdin io.Reader, stdout io.Writer, stderr io.Writer, args []string, exec execFunc, exit exitFunc) {
 	env, program, wait, reportPID := parseConsoleArgs(args)
 
 	if wait {
 		firstByte := make([]byte, 1)
-		readBytes, err := os.Stdin.Read(firstByte)
+		readBytes, err := stdin.Read(firstByte)
 		if err != nil {
-			os.Exit(2)
+			exit(2)
 		}
 		if readBytes != 1 {
-			os.Exit(2)
+			exit(2)
 		}
 		if firstByte[0] != '\000' {
 			usage("non-null first character", true)
@@ -29,15 +36,15 @@ func console(args []string) {
 		pid := uint32(os.Getpid())
 		b := make([]byte, 4)
 		binary.LittleEndian.PutUint32(b, pid)
-		_, err := os.Stdout.Write(b)
+		_, err := stdout.Write(b)
 		if err != nil {
-			os.Exit(3)
+			exit(3)
 		}
 	}
 
-	if err := syscall.Exec(program[0], program[1:], env); err != nil {
-		_, _ = os.Stderr.Write([]byte(err.Error()))
-		os.Exit(127)
+	if err := exec(program[0], program[1:], env); err != nil {
+		_, _ = stderr.Write([]byte(err.Error()))
+		exit(127)
 	}
 }
 
@@ -75,7 +82,7 @@ loop:
 		case "--wait":
 			wait = true
 			args = args[1:]
-		case "--reportPID":
+		case "--pid":
 			reportPID = true
 			args = args[1:]
 		default:

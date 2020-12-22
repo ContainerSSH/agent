@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"syscall"
 )
 
 //go:generate go run scripts/generate-usage.go
@@ -35,7 +36,7 @@ func main() {
 
 	switch args[1] {
 	case "console":
-		console(args[2:])
+		console(os.Stdin, os.Stdout, os.Stderr, args[2:], syscall.Exec, os.Exit)
 	default:
 		usage(fmt.Sprintf("invalid mode: %s", args[1]), false)
 	}
