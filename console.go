@@ -42,7 +42,7 @@ func console(args []string) {
 }
 
 func parseConsoleArgs(args []string) ([]string, []string, bool, bool) {
-	var env []string
+	var env = os.Environ()
 	var program []string
 	wait := false
 	reportPID := false
