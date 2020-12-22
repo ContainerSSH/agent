@@ -9,6 +9,39 @@ import (
 )
 
 func console(args []string) {
+	env, program, wait, reportPID := parseConsoleArgs(args)
+
+	if wait {
+		firstByte := make([]byte, 1)
+		readBytes, err := os.Stdin.Read(firstByte)
+		if err != nil {
+			os.Exit(2)
+		}
+		if readBytes != 1 {
+			os.Exit(2)
+		}
+		if firstByte[0] != '\000' {
+			usage("non-null first character", true)
+		}
+	}
+
+	if reportPID {
+		pid := uint32(os.Getpid())
+		b := make([]byte, 4)
+		binary.LittleEndian.PutUint32(b, pid)
+		_, err := os.Stdout.Write(b)
+		if err != nil {
+			os.Exit(3)
+		}
+	}
+
+	if err := syscall.Exec(program[0], program[1:], env); err != nil {
+		_, _ = os.Stderr.Write([]byte(err.Error()))
+		os.Exit(127)
+	}
+}
+
+func parseConsoleArgs(args []string) ([]string, []string, bool, bool) {
 	var env []string
 	var program []string
 	wait := false
@@ -49,33 +82,5 @@ loop:
 			usage(fmt.Sprintf("invalid parameter: %s", args[0]), true)
 		}
 	}
-
-	if wait {
-		firstByte := make([]byte, 1)
-		readBytes, err := os.Stdin.Read(firstByte)
-		if err != nil {
-			os.Exit(2)
-		}
-		if readBytes != 1 {
-			os.Exit(2)
-		}
-		if firstByte[0] != '\000' {
-			usage("non-null first character", true)
-		}
-	}
-
-	if reportPID {
-		pid := uint32(os.Getpid())
-		b := make([]byte, 4)
-		binary.LittleEndian.PutUint32(b, pid)
-		_, err := os.Stdout.Write(b)
-		if err != nil {
-			os.Exit(3)
-		}
-	}
-
-	if err := syscall.Exec(program[0], program[1:], env); err != nil {
-		_, _ = os.Stderr.Write([]byte(err.Error()))
-		os.Exit(127)
-	}
+	return env, program, wait, reportPID
 }
