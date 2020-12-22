@@ -1,3 +1,7 @@
+# Generated code
+usage.go
+
+# Artifacts
 build/
 cover.out
 config.yaml
