@@ -23,8 +23,10 @@ required argument:
 
     ./agent MODE [OPTIONS] -- PROGRAM
 
-The program will be launched with `execv`, replacing the agent image
-with the launched program as PID 1.
+The program will be launched with `execve` and replace the agent
+completely. (The agent will not be running once the program is launched.)
+This makes the agent safe to run even when you need the program to be run
+as PID 1.
 
 ### Setting environment variables
 
