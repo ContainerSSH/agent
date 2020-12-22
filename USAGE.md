@@ -44,5 +44,25 @@ line of a shell or equivalent will be lost. Therefore, the agent has a
 
 The `--wait` flag will not launch the desired program until a byte with
 the value of `\0` is received on `stdin`. This byte will not be passed to
-the program and if any other byte is received the agent will exit.
+the program and if any other byte is received the agent will exit to
+prevent data stream corruption.
 
+## Reporting PID
+
+Since most container implementations don't report the PID of the process
+inside the container in the `exec` method the `--pid` flag will report
+the PID of the current program over stdout in the first 4 bytes as a 
+little-endian uint32.
+
+## Return codes
+
+This program will exit with one of the following exit codes:
+
+`1`
+: General configuration error. See `stderr` for details.
+`2`
+: Could not read from `stdin` with `--wait`
+`3`
+: Could not write PID to `stdout` with `--pid`.
+`127`
+: Could not execute desired program.

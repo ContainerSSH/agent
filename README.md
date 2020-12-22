@@ -12,3 +12,25 @@ This is the agent meant to be installed in the containers run by ContainerSSH. W
 
 ## How this application works
 
+This application is intended as a single binary to be embedded into a container image as a wrapper for the actual program to be launched. Currently, this program supports one mode that can be invoked as follows:
+
+```bash
+./agent console --env FOO=bar --env TERM=xterm --wait --pid -- /bin/bash
+```
+
+The parameters are as follows:
+
+- `console` sets the agent to console mode. (This is the only mode supported.)
+- `env` passes an environment variable to the desired program.
+- `wait` waits for a `\0` byte on the `stdin` before launching the desired program.
+- `pid` writes the process ID of the program to the `stdout` in the first 4 bytes as a little-endian `uint32` before launching the program.
+
+The detailed usage is documented in [USAGE.md](USAGE.md).
+
+## Building this application
+
+This application can be built by running the following two programs:
+
+- `go generate`
+- `go build `
+

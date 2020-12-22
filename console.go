@@ -1,7 +1,8 @@
 package main
 
 import (
-	"log"
+	"encoding/binary"
+	"fmt"
 	"os"
 	"strings"
 	"syscall"
@@ -11,14 +12,14 @@ func console(args []string) {
 	var env []string
 	var program []string
 	wait := false
+	reportPID := false
 
 loop:
 	for {
 		if len(args) == 0 {
 			break loop
 		}
-		nextArg := args[0]
-		switch nextArg {
+		switch args[0] {
 		case "--":
 			if len(args) == 1 {
 				usage("no program to run passed", true)
@@ -41,6 +42,11 @@ loop:
 		case "--wait":
 			wait = true
 			args = args[1:]
+		case "--reportPID":
+			reportPID = true
+			args = args[1:]
+		default:
+			usage(fmt.Sprintf("invalid parameter: %s", args[0]), true)
 		}
 	}
 
@@ -51,14 +57,25 @@ loop:
 			os.Exit(2)
 		}
 		if readBytes != 1 {
-			os.Exit(3)
+			os.Exit(2)
 		}
 		if firstByte[0] != '\000' {
 			usage("non-null first character", true)
 		}
 	}
 
+	if reportPID {
+		pid := uint32(os.Getpid())
+		b := make([]byte, 4)
+		binary.LittleEndian.PutUint32(b, pid)
+		_, err := os.Stdout.Write(b)
+		if err != nil {
+			os.Exit(3)
+		}
+	}
+
 	if err := syscall.Exec(program[0], program[1:], env); err != nil {
-		log.Fatal(err)
+		_, _ = os.Stderr.Write([]byte(err.Error()))
+		os.Exit(127)
 	}
 }
