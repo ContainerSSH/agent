@@ -3,8 +3,8 @@
 <!--suppress HtmlDeprecatedAttribute -->
 <h1 align="center">ContainerSSH Guest Agent</h1>
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/containerssh/agent?style=for-the-badge)](https://goreportcard.com/report/github.com/containerssh/library-template)
-[![LGTM Alerts](https://img.shields.io/lgtm/alerts/github/ContainerSSH/agent?style=for-the-badge)](https://lgtm.com/projects/g/ContainerSSH/library-template/)
+[![Go Report Card](https://goreportcard.com/badge/github.com/containerssh/agent?style=for-the-badge)](https://goreportcard.com/report/github.com/containerssh/agent)
+[![LGTM Alerts](https://img.shields.io/lgtm/alerts/github/ContainerSSH/agent?style=for-the-badge)](https://lgtm.com/projects/g/ContainerSSH/agent/)
 
 This is the agent meant to be installed in the containers run by ContainerSSH. While images work without this agent, several features may not be available depending on what the container engine supports. 
 
