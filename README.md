@@ -12,18 +12,28 @@ This is the agent meant to be installed in the containers run by ContainerSSH. W
 
 ## How this application works
 
-This application is intended as a single binary to be embedded into a container image as a wrapper for the actual program to be launched. Currently, this program supports one mode that can be invoked as follows:
+This application is intended as a single binary to be embedded into a container image to handle features that the container engine (Docker, Kubernetes) does not support. Currently, the following modes are supported:
 
 ```bash
+# Run in Console mode
 ./agent console --env FOO=bar --env TERM=xterm --wait --pid -- /bin/bash
+
+# Run in Signal mode
+./agent signal --pid 3 --signal TERM
 ```
 
-The parameters are as follows:
+The console mode supports the following parameters:
 
-- `console` sets the agent to console mode. (This is the only mode supported.)
+- `console` sets the agent to console mode.
 - `env` passes an environment variable to the desired program.
 - `wait` waits for a `\0` byte on the `stdin` before launching the desired program.
 - `pid` writes the process ID of the program to the `stdout` in the first 4 bytes as a little-endian `uint32` before launching the program.
+
+The agent mode supports the following parameters:
+
+- `signal` sets the agent to signal mode.
+- `pid` passes the process ID to send the signal to.
+- `signal` sets the signal to send. These are defined in [RFC 4254 Section 6.9](https://tools.ietf.org/html/rfc4254#section-6.9).
 
 The detailed usage is documented in [USAGE.md](USAGE.md).
 

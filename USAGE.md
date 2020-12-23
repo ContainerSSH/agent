@@ -8,10 +8,13 @@ may not be available depending on what the container engine supports.
 
     ./agent MODE [OPTIONS] 
 
-Currently, the agent has one mode:
+Currently, the agent has the following modes:
 
 `console`
 : This mode will take care of console-related activities.
+
+`signal`
+: This mode will send a signal to a process.
 
 ---
 
@@ -71,3 +74,46 @@ This program will exit with one of the following exit codes:
 
 `127`
 : Could not execute desired program.
+
+---
+
+## Signal mode
+
+The signal mode is useful for forwarding signals to processes that are
+already running.
+
+The signal mode has the following syntax:
+
+    ./agent signal --pid 1234 --signal ABRT
+
+The signal names are, as per RFC 4254 Section 6.9:
+
+- `ABRT`
+- `ALRM`
+- `FPE`
+- `HUP`
+- `ILL`
+- `INT`
+- `KILL`
+- `PIPE`
+- `QUIT`
+- `SEGV`
+- `TERM`
+- `USR1`
+- `USR2`
+
+**Note:** `USR1` and `USR2` are not supported on Windows.
+
+This mode has the following exit codes:
+
+`0`
+: Signal successfully sent.
+
+`1`
+: General configuration error. See `stderr` for details.
+
+`2`
+: The specified process was not found. See `stderr` for details.
+
+`3`
+: Failed to send signal to process. See `stderr` for details.

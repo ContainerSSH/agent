@@ -9,30 +9,6 @@ import (
 	"time"
 )
 
-type exitData struct {
-	code int
-}
-
-func exit(code int) {
-	panic(exitData{
-		code: code,
-	})
-}
-
-type execData struct {
-	argv0 string
-	argv  []string
-	envv  []string
-}
-
-func exec(argv0 string, argv []string, envv []string) (err error) {
-	panic(execData{
-		argv0: argv0,
-		argv:  argv,
-		envv:  envv,
-	})
-}
-
 func TestExec(t *testing.T) {
 	stdin, _ := io.Pipe()
 	_, stdout := io.Pipe()

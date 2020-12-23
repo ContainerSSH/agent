@@ -35,8 +35,17 @@ func main() {
 	}
 
 	switch args[1] {
+	case "-h":
+		fallthrough
+	case "--help":
+		usage("", false)
+		os.Exit(0)
 	case "console":
 		console(os.Stdin, os.Stdout, os.Stderr, args[2:], syscall.Exec, os.Exit)
+	case "signal":
+		signal(os.Stderr, args[2:], syscall.Exit, func(pid int) (Process, error) {
+			return os.FindProcess(pid)
+		})
 	default:
 		usage(fmt.Sprintf("invalid mode: %s", args[1]), false)
 	}

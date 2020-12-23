@@ -32,7 +32,8 @@ func escape(text string) string {
 	return result
 }
 
-var coreRe = regexp.MustCompile("`([^`]+)`")
+var codeRe = regexp.MustCompile("`([^`]+)`")
+var boldRe = regexp.MustCompile("\\*\\*([^*]+)\\*\\*")
 var bold = "\\033[1m"
 var dim = "\\033[2m"
 var underlined = "\\033[4m"
@@ -85,11 +86,22 @@ func color(text string) string {
 		text = "    " + strings.TrimPrefix(text, ": ")
 	}
 
-	text = coreRe.ReplaceAllStringFunc(text, func(s string) string {
+	text = codeRe.ReplaceAllStringFunc(text, func(s string) string {
 		text = strings.TrimSuffix(strings.TrimPrefix(s, "`"), "`")
 		text = fmt.Sprintf(
 			"%s%s%s",
 			white,
+			text,
+			reset,
+		)
+		return text
+	})
+
+	text = boldRe.ReplaceAllStringFunc(text, func(s string) string {
+		text = strings.TrimSuffix(strings.TrimPrefix(s, "**"), "**")
+		text = fmt.Sprintf(
+			"%s%s%s",
+			bold,
 			text,
 			reset,
 		)
@@ -111,10 +123,18 @@ func plain(text string) string {
 		text = "    " + strings.TrimPrefix(text, ": ")
 	}
 
-	text = coreRe.ReplaceAllStringFunc(text, func(s string) string {
+	text = codeRe.ReplaceAllStringFunc(text, func(s string) string {
 		text = strings.TrimSuffix(strings.TrimPrefix(s, "`"), "`")
 		text = fmt.Sprintf(
-			" %s ",
+			"%s",
+			text,
+		)
+		return text
+	})
+	text = boldRe.ReplaceAllStringFunc(text, func(s string) string {
+		text = strings.TrimSuffix(strings.TrimPrefix(s, "**"), "**")
+		text = fmt.Sprintf(
+			"%s",
 			text,
 		)
 		return text
