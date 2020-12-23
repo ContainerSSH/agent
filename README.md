@@ -29,7 +29,7 @@ The console mode supports the following parameters:
 - `wait` waits for a `\0` byte on the `stdin` before launching the desired program.
 - `pid` writes the process ID of the program to the `stdout` in the first 4 bytes as a little-endian `uint32` before launching the program.
 
-The agent mode supports the following parameters:
+The signal mode supports the following parameters:
 
 - `signal` sets the agent to signal mode.
 - `pid` passes the process ID to send the signal to.
