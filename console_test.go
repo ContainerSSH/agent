@@ -133,11 +133,11 @@ func TestExecWait(t *testing.T) {
 	go func() {
 		select {
 		case <-exitSignal:
-			t.FailNow()
+			t.Fail()
 		case <-time.After(500 * time.Millisecond):
 		}
 		if _, err := stdinWriter.Write([]byte{'\000'}); err != nil {
-			t.FailNow()
+			t.Fail()
 		}
 		<-exitSignal
 	}()
@@ -168,14 +168,14 @@ func TestExecPid(t *testing.T) {
 		data := make([]byte, 4)
 		bytesRead, err := stdoutReader.Read(data)
 		if err != nil {
-			t.FailNow()
+			t.Fail()
 		}
 		if bytesRead != 4 {
-			t.FailNow()
+			t.Fail()
 		}
 		pid := binary.LittleEndian.Uint32(data)
 		if pid != uint32(os.Getpid()) {
-			t.FailNow()
+			t.Fail()
 		}
 	}()
 
