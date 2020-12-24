@@ -7,7 +7,6 @@ builds:
     binary: "containerssh-agent"
     goos:
       - linux
-      - darwin
       - windows
     goarch:
       - amd64
@@ -28,8 +27,7 @@ nfpms:
     description: The guest agent for ContainerSSH, an SSH server that launches containers on demand.
     license: MIT
     builds:
-      - containerssh-linux
-      - containerssh-testauthconfigserver
+      - containerssh-agent
     formats:
       - deb
       - rpm
