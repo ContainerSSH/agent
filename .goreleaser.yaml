@@ -1,0 +1,49 @@
+before:
+  hooks:
+    - go generate
+    - go test ./...
+builds:
+  - id: containerssh-agent
+    binary: "containerssh-agent"
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+archives:
+  - builds:
+      - containerssh-agent
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE.md
+nfpms:
+  - vendor: ContainerSSH
+    homepage: https://containerssh.io
+    maintainer: Janos Pasztor <handshake@containerssh.io>
+    description: The guest agent for ContainerSSH, an SSH server that launches containers on demand.
+    license: MIT
+    builds:
+      - containerssh-linux
+      - containerssh-testauthconfigserver
+    formats:
+      - deb
+      - rpm
+    bindir: /usr/bin
+    files:
+      LICENSE.md: /usr/share/doc/containerssh-agent/LICENSE.md
+source:
+  enabled: true
+  name_template: 'containerssh-agent-{{ .Version }}-source'
+dist: build
+release:
+  github:
+    owner: containerssh
+    name: agent
+  prerelease: auto
+  extra_files:
+    - glob: LICENSE.md
