@@ -37,6 +37,9 @@ nfpms:
 source:
   enabled: true
   name_template: 'containerssh-agent-{{ .Version }}-source'
+signs:
+  - id: sign
+    artifacts: all
 dist: build
 release:
   github:
