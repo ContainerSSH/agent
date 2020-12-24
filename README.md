@@ -10,6 +10,22 @@ This is the agent meant to be installed in the containers run by ContainerSSH. W
 
 <p align="center"><strong>Note: This is a developer documentation.</strong><br />The user documentation for ContainerSSH is located at <a href="https://containerssh.github.io">containerssh.io</a>.</p>
 
+## Integrating the agent
+
+This agent is intended to be integrated into container images. The installation process is as follows:
+
+1. Go to the [releases section](https://github.com/ContainerSSH/agent/releases).
+2. Download the latest release for your platform, as well as the signature file.
+3. Download the GPG key from [https://containerssh.io/gpg.txt](https://containerssh.io/gpg.txt).
+4. Import the GPG key into your keychain (`gpg --import gpg.txt`).
+5. Edit the key: `gpg --edit-key 3EE5B012FA7B400CD952601E4689F1F0F358FABA`
+6. Mark it as trusted: `trust`
+7. Quit using the `quit` command.
+8. Verify the GPG signature: `gpg --verify downloadedfile.sig downloadedfile`
+9. Install the file using your package manager.
+
+You can look at the default [guest image Dockerfile](https://github.com/containerssh/guest-image) for an example on Ubuntu.
+
 ## How this application works
 
 This application is intended as a single binary to be embedded into a container image to handle features that the container engine (Docker, Kubernetes) does not support. Currently, the following modes are supported:
