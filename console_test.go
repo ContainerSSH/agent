@@ -19,7 +19,10 @@ func TestExec(t *testing.T) {
 		if "test" != execData.argv0 {
 			t.FailNow()
 		}
-		if len(execData.argv) != 0 {
+		if "test" != execData.argv[0] {
+			t.FailNow()
+		}
+		if len(execData.argv) != 1 {
 			t.FailNow()
 		}
 		if len(execData.envv) != len(os.Environ()) {
@@ -41,13 +44,16 @@ func TestExecWithParams(t *testing.T) {
 		if "test" != execData.argv0 {
 			t.FailNow()
 		}
-		if len(execData.argv) != 2 {
+		if len(execData.argv) != 3 {
 			t.FailNow()
 		}
-		if execData.argv[0] != "test1" {
+		if execData.argv[0] != "test" {
 			t.FailNow()
 		}
-		if execData.argv[1] != "test2" {
+		if execData.argv[1] != "test1" {
+			t.FailNow()
+		}
+		if execData.argv[2] != "test2" {
 			t.FailNow()
 		}
 		if len(execData.envv) != len(os.Environ()) {
@@ -69,7 +75,7 @@ func TestExecWithEnv(t *testing.T) {
 		if "test" != execData.argv0 {
 			t.FailNow()
 		}
-		if len(execData.argv) != 0 {
+		if len(execData.argv) != 1 {
 			t.FailNow()
 		}
 		for _, env := range execData.envv {
@@ -97,7 +103,7 @@ func TestExecWait(t *testing.T) {
 		if "test" != execData.argv0 {
 			t.FailNow()
 		}
-		if len(execData.argv) != 0 {
+		if len(execData.argv) != 1 {
 			t.FailNow()
 		}
 		if len(execData.envv) != len(os.Environ()) {
@@ -132,7 +138,7 @@ func TestExecPid(t *testing.T) {
 		if "test" != execData.argv0 {
 			t.FailNow()
 		}
-		if len(execData.argv) != 0 {
+		if len(execData.argv) != 1 {
 			t.FailNow()
 		}
 		if len(execData.envv) != len(os.Environ()) {

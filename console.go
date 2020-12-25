@@ -42,7 +42,7 @@ func console(stdin io.Reader, stdout io.Writer, stderr io.Writer, args []string,
 		}
 	}
 
-	if err := exec(program[0], program[1:], env); err != nil {
+	if err := exec(program[0], program, env); err != nil {
 		_, _ = stderr.Write([]byte(err.Error()))
 		exit(127)
 	}
