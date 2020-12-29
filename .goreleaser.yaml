@@ -1,3 +1,7 @@
+before:
+  hooks:
+    - go generate
+    - go test ./...
 builds:
   - id: containerssh-agent
     binary: "containerssh-agent"
@@ -8,10 +12,6 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
-    hooks:
-      pre:
-        - go generate
-        - go test ./...
 archives:
   - builds:
       - containerssh-agent
@@ -19,7 +19,32 @@ archives:
       - goos: windows
         format: zip
 nfpms:
-  - vendor: ContainerSSH
+  - id: deb-package
+    vendor: ContainerSSH
+    homepage: https://containerssh.io
+    maintainer: Janos Pasztor <handshake@containerssh.io>
+    description: The guest agent for ContainerSSH, an SSH server that launches containers on demand.
+    license: MIT
+    package_name: containerssh-agent
+    builds:
+      - containerssh-agent
+    formats:
+      - deb
+    bindir: /usr/bin
+  - id: rpm-package
+    vendor: ContainerSSH
+    homepage: https://containerssh.io
+    maintainer: Janos Pasztor <handshake@containerssh.io>
+    description: The guest agent for ContainerSSH, an SSH server that launches containers on demand.
+    license: MIT
+    package_name: containerssh-agent
+    builds:
+      - containerssh-agent
+    formats:
+      - rpm
+    bindir: /usr/bin
+  - id: apk-package
+    vendor: ContainerSSH
     homepage: https://containerssh.io
     maintainer: Janos Pasztor <handshake@containerssh.io>
     description: The guest agent for ContainerSSH, an SSH server that launches containers on demand.
@@ -29,18 +54,7 @@ nfpms:
       - containerssh-agent
     formats:
       - apk
-      - deb
-      - rpm
     bindir: /usr/bin
-    rpm:
-      signature:
-        key_file: /tmp/signing.gpg
-    deb:
-      signature:
-        key_file: /tmp/signing.gpg
-    apk:
-      signature:
-        key_file: /tmp/signing.gpg
 dockers:
   - image_templates:
       - "containerssh/agent:latest"
@@ -52,7 +66,21 @@ source:
   enabled: true
   name_template: 'containerssh-agent-{{ .Version }}-source'
 signs:
-  - id: sign
+  - id: sign-deb-package
+    artifacts: all
+    cmd: /bin/bash
+    args:
+      - '-c'
+      # HACK: the 'ids' parameter seems to not work on deb packages.
+      - if [[ "${artifact}" == *.deb ]]; then dpkg-sig -k handshake@containerssh.io -s "builder" ${artifact}; fi
+  - id: sign-rpm-package
+    artifacts: all
+    cmd: /bin/bash
+    args:
+      - '-c'
+      # HACK: the 'ids' parameter seems to not work on deb packages.
+      - if [[ "${artifact}" == *.rpm ]]; then rpmsign -k 61C5350AEC91E2C9 --addsign ${artifact}; fi
+  - id: sign-all
     artifacts: all
 dist: build
 release:

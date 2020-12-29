@@ -1,3 +1,2 @@
 FROM scratch
-COPY agent /usr/bin/agent
-COPY LICENSE.md /usr/share/doc/containerssh/LICENSE.md
+COPY containerssh-agent /usr/bin/containerssh-agent
