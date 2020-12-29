@@ -24,7 +24,7 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_PASSWORD }}
       - name: Import signing key
-        run: echo "${GPG_KEY}" | base64 -d | gpg --batch --import && mkdir /var/secrets && echo "${GPG_KEY}" | base64 -d >/var/secrets/signing.gpg
+        run: echo "${GPG_KEY}" | base64 -d | gpg --batch --import && echo "${GPG_KEY}" | base64 -d >/tmp/signing.gpg
         env:
           GPG_KEY: ${{ secrets.GPG_KEY }}
       - name: Run GoReleaser

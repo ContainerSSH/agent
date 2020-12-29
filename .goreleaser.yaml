@@ -34,13 +34,13 @@ nfpms:
     bindir: /usr/bin
     rpm:
       signature:
-        key_file: /var/secrets/signing.gpg
+        key_file: /tmp/signing.gpg
     deb:
       signature:
-        key_file: /var/secrets/signing.gpg
+        key_file: /tmp/signing.gpg
     apk:
       signature:
-        key_file: /var/secrets/signing.gpg
+        key_file: /tmp/signing.gpg
 dockers:
   - image_templates:
       - "containerssh/agent:latest"
