@@ -67,7 +67,6 @@ source:
   name_template: 'containerssh-agent-{{ .Version }}-source'
 signs:
   - id: sign-deb-package
-    name: Sign DEB package
     artifacts: all
     cmd: /bin/bash
     args:
@@ -75,7 +74,6 @@ signs:
       # HACK: the 'ids' parameter seems to not work on deb packages.
       - if [[ "${artifact}" == *.deb ]]; then dpkg-sig -k handshake@containerssh.io -s "builder" ${artifact}; fi
   - id: sign-rpm-package
-    name: Sign RPM package
     artifacts: all
     cmd: /bin/bash
     args:
