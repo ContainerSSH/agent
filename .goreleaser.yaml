@@ -1,7 +1,3 @@
-before:
-  hooks:
-    - go generate
-    - go test ./...
 builds:
   - id: containerssh-agent
     binary: "containerssh-agent"
@@ -12,14 +8,16 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
+    hooks:
+      pre:
+        - go generate
+        - go test ./...
 archives:
   - builds:
       - containerssh-agent
     format_overrides:
       - goos: windows
         format: zip
-    files:
-      - LICENSE.md
 nfpms:
   - vendor: ContainerSSH
     homepage: https://containerssh.io
@@ -34,8 +32,22 @@ nfpms:
       - deb
       - rpm
     bindir: /usr/bin
-    files:
-      LICENSE.md: /usr/share/doc/containerssh-agent/LICENSE.md
+    rpm:
+      signature:
+        key_file: /var/secrets/signing.gpg
+    deb:
+      signature:
+        key_file: /var/secrets/signing.gpg
+    apk:
+      signature:
+        key_file: /var/secrets/signing.gpg
+dockers:
+  - image_templates:
+      - "containerssh/agent:latest"
+      - "containerssh/agent:{{ .Tag }}"
+      - "quay.io/containerssh/agent:latest"
+      - "quay.io/containerssh/agent:{{ .Tag }}"
+    dockerfile: Dockerfile
 source:
   enabled: true
   name_template: 'containerssh-agent-{{ .Version }}-source'

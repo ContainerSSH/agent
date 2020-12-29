@@ -7,6 +7,7 @@ import (
 )
 
 //go:generate go run scripts/generate-usage.go
+//go:generate go run scripts/generate-license.go
 
 func usage(error string, exit bool) {
 	if fileInfo, _ := os.Stdout.Stat(); (fileInfo.Mode() & os.ModeCharDevice) != 0 {
@@ -25,6 +26,13 @@ func usage(error string, exit bool) {
 	if exit {
 		os.Exit(1)
 	}
+}
+
+func license(argv []string) {
+	if len(argv) > 0 {
+		usage("license takes no arguments", true)
+	}
+	_, _ = os.Stdout.Write([]byte(licenseText))
 }
 
 func main() {
@@ -46,6 +54,8 @@ func main() {
 		signal(os.Stderr, args[2:], syscall.Exit, func(pid int) (Process, error) {
 			return os.FindProcess(pid)
 		})
+	case "license":
+		license(args[2:])
 	default:
 		usage(fmt.Sprintf("invalid mode: %s", args[1]), false)
 	}

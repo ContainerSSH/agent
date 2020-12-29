@@ -1,5 +1,8 @@
 # Generated code
 usage.go
+usage.go~
+license-data.go
+license-data.go~
 
 # Artifacts
 build/

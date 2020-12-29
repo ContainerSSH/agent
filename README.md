@@ -12,17 +12,46 @@ This is the agent meant to be installed in the containers run by ContainerSSH. W
 
 ## Integrating the agent
 
-This agent is intended to be integrated into container images. The installation process is as follows:
+This agent is intended to be integrated into container images. There are two main installation methods:
 
-1. Go to the [releases section](https://github.com/ContainerSSH/agent/releases).
-2. Download the latest release for your platform, as well as the signature file.
-3. Download the GPG key from [https://containerssh.io/gpg.txt](https://containerssh.io/gpg.txt).
-4. Import the GPG key into your keychain (`gpg --import gpg.txt`).
-5. Edit the key: `gpg --edit-key 3EE5B012FA7B400CD952601E4689F1F0F358FABA`
-6. Mark it as trusted: `trust`
-7. Quit using the `quit` command.
-8. Verify the GPG signature: `gpg --verify downloadedfile.sig downloadedfile`
-9. Install the file using your package manager.
+### Using the base image (recommended)
+
+This method uses the `containerssh/agent` container image as part of a multistage build:
+
+```
+FROM containerssh/agent AS agent
+
+FROM your-base-image
+COPY --from=agent /usr/bin/containerssh-agent /usr/bin/containerssh-agent
+# Your other build commands here
+```
+
+### Installing the binaries
+
+To use this method go to the [latest release from the releases section](https://github.com/ContainerSSH/agent/releases) and verify it against our [https://containerssh.io/gpg.txt](https://containerssh.io/gpg.txt) key (`3EE5B012FA7B400CD952601E4689F1F0F358FABA`).
+
+On an Ubuntu image build this would involve the following steps:
+
+```Dockerfile
+ARG AGENT_GPG_FINGERPRINT=3EE5B012FA7B400CD952601E4689F1F0F358FABA
+ARG AGENT_GPG_SOURCE=https://containerssh.io/gpg.txt
+
+RUN echo "\e[1;32mInstalling ContainerSSH guest agent...\e[0m" && \
+    DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::='--force-confold' update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::='--force-confold' -fuy --allow-downgrades --allow-remove-essential --allow-change-held-packages install gpg && \
+    wget -q -O - https://api.github.com/repos/containerssh/agent/releases/latest | grep browser_download_url | grep -e "agent_.*_linux_amd64.deb" | awk ' { print $2 } ' | sed -e 's/"//g' > /tmp/assets.txt && \
+    wget -q -O /tmp/agent.deb $(cat /tmp/assets.txt |grep -v .sig) && \
+    wget -q -O /tmp/agent.deb.sig $(cat /tmp/assets.txt |grep .sig) && \
+    wget -q -O - $AGENT_GPG_SOURCE | gpg --import && \
+    echo -e "5\ny\n" | gpg --command-fd 0 --batch --expert --edit-key $AGENT_GPG_FINGERPRINT trust && \
+    test $(gpg --status-fd=1 --verify /tmp/agent.deb.sig /tmp/agent.deb | grep VALIDSIG | grep $AGENT_GPG_FINGERPRINT | wc -l) -eq 1 && \
+    dpkg -i /tmp/agent.deb && \
+    rm -rf /tmp/* && \
+    rm -rf ~/.gnupg && \
+    DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::='--force-confold' -fuy --allow-downgrades --allow-remove-essential --allow-change-held-packages remove gpg && \
+    DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::='--force-confold' -y clean && \
+    /usr/bin/containerssh-agent -h
+```
 
 You can look at the default [guest image Dockerfile](https://github.com/containerssh/guest-image) for an example on Ubuntu.
 

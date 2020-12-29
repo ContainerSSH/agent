@@ -16,6 +16,9 @@ Currently, the agent has the following modes:
 `signal`
 : This mode will send a signal to a process.
 
+`license`
+: This mode will print the license of the agent and exit.
+
 ---
 
 ## Console mode
