@@ -79,7 +79,7 @@ signs:
     args:
       - '-c'
       # HACK: the 'ids' parameter seems to not work on deb packages.
-      - if [[ "${artifact}" == *.rpm ]]; then rpmsign -k 61C5350AEC91E2C9 --addsign ${artifact}; fi
+      - if [[ "${artifact}" == *.rpm ]]; then rpmsign --key-id 61C5350AEC91E2C9 --addsign ${artifact}; fi
   - id: sign-all
     artifacts: all
 dist: build
