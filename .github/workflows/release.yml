@@ -23,16 +23,6 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_PASSWORD }}
-      - name: Build and push (Docker Hub)
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: containerssh/containerssh-guest-image:latest
-      - name: Build and push (Quay.io)
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: quay.io/containerssh/containerssh-guest-image:latest
       - name: Import signing key
         run: echo "${GPG_KEY}" | base64 -d | gpg --batch --import && mkdir /var/secrets && echo "${GPG_KEY}" | base64 -d >/var/secrets/signing.gpg
         env:
