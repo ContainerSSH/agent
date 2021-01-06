@@ -73,13 +73,6 @@ signs:
       - '-c'
       # HACK: the 'ids' parameter seems to not work on deb packages.
       - if [[ "${artifact}" == *.deb ]]; then dpkg-sig -k handshake@containerssh.io -s "builder" ${artifact}; fi
-  - id: sign-rpm-package
-    artifacts: all
-    cmd: /bin/bash
-    args:
-      - '-c'
-      # HACK: the 'ids' parameter seems to not work on deb packages.
-      - if [[ "${artifact}" == *.rpm ]]; then rpmsign -D '%__gpg_sign_cmd   %{__gpg} gpg --no-verbose --no-armor --batch --pinentry-mode loopback --passphrase "" --no-secmem-warning -u 61C5350AEC91E2C9 -sbo %{__signature_filename} %{__plaintext_filename}' --key-id 61C5350AEC91E2C9 --addsign ${artifact}; fi
   - id: sign-all
     artifacts: all
 dist: build
