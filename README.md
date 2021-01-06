@@ -26,6 +26,14 @@ COPY --from=agent /usr/bin/containerssh-agent /usr/bin/containerssh-agent
 # Your other build commands here
 ```
 
+### Installing on Debian/Ubuntu
+
+We have a [Debian repository](https://packages.containerssh.io) containing the agent package. Once you have set up the repository you can install the agent like this:
+
+```bash
+apt-get install containerssh-agent
+```
+
 ### Installing the binaries
 
 To use this method go to the [latest release from the releases section](https://github.com/ContainerSSH/agent/releases) and verify it against our [https://containerssh.io/gpg.txt](https://containerssh.io/gpg.txt) key (`3EE5B012FA7B400CD952601E4689F1F0F358FABA`).
