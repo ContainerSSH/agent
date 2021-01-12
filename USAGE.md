@@ -51,9 +51,9 @@ line of a shell or equivalent will be lost. Therefore, the agent has a
 `--wait` flag.
 
 The `--wait` flag will not launch the desired program until a byte with
-the value of `\0` is received on `stdin`. This byte will not be passed to
-the program and if any other byte is received the agent will exit to
-prevent data stream corruption.
+the value of `\0` or a newline (`\n`) is received on `stdin`. This byte will
+not be passed to the program and if any other byte is received the agent
+will exit to prevent data stream corruption.
 
 ## Reporting PID
 

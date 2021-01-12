@@ -22,13 +22,16 @@ func console(stdin io.Reader, stdout io.Writer, stderr io.Writer, args []string,
 		firstByte := make([]byte, 1)
 		readBytes, err := stdin.Read(firstByte)
 		if err != nil {
+			usage(fmt.Sprintf("Failed to read from stdin (%v)", err), false)
 			exit(2)
 		}
 		if readBytes != 1 {
+			usage("Nothing read from stdin", false)
 			exit(2)
 		}
-		if firstByte[0] != '\000' {
-			usage("non-null first character", true)
+		if firstByte[0] != '\000' && firstByte[0] != '\n' {
+			usage("Unexpected first character. Send either a null or a newline character to start program.", false)
+			exit(2)
 		}
 	}
 
