@@ -8,7 +8,7 @@
 
 This is the agent meant to be installed in the containers run by ContainerSSH. While images work without this agent, several features may not be available depending on what the container engine supports. 
 
-<p align="center"><strong>Note: This is a developer documentation.</strong><br />The user documentation for ContainerSSH is located at <a href="https://containerssh.github.io">containerssh.io</a>.</p>
+<p align="center"><strong>⚠⚠⚠ Warning: This is a developer documentation. ⚠⚠⚠</strong><br />The user documentation for ContainerSSH is located at <a href="https://containerssh.io">containerssh.io</a>.</p>
 
 ## Integrating the agent
 
