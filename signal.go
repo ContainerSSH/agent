@@ -27,7 +27,7 @@ loop:
 		}
 		switch args[0] {
 		case "--pid":
-			if len(args[0]) < 1 {
+			if len(args) < 2 {
 				usage("--pid requires an argument", true)
 			}
 			if pid > -1 {
@@ -39,7 +39,7 @@ loop:
 			}
 			args = args[2:]
 		case "--signal":
-			if len(args[0]) < 1 {
+			if len(args) < 2 {
 				usage("--signal requires an argument", true)
 			}
 			signalName := args[1]
