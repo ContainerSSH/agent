@@ -7,6 +7,7 @@ import (
 	"os"
 	"syscall"
 	"testing"
+	"time"
 )
 
 func TestWaitSignal(t *testing.T) {
@@ -31,6 +32,7 @@ func TestWaitSignal(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	time.Sleep(time.Second)
 	if err := p.Signal(syscall.SIGINT); err != nil {
 		t.Fatal(err)
 	}
