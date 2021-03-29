@@ -54,6 +54,8 @@ func main() {
 		signal(os.Stderr, args[2:], syscall.Exit, func(pid int) (Process, error) {
 			return os.FindProcess(pid)
 		})
+	case "wait-signal":
+		waitSignal(os.Stderr, args[2:], syscall.Exit)
 	case "license":
 		license(args[2:])
 	default:
