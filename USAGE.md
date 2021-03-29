@@ -16,6 +16,9 @@ Currently, the agent has the following modes:
 `signal`
 : This mode will send a signal to a process.
 
+`wait-signal`
+: Waits for a specific signal or signals before it exits.
+
 `license`
 : This mode will print the license of the agent and exit.
 
@@ -120,3 +123,33 @@ This mode has the following exit codes:
 
 `3`
 : Failed to send signal to process. See `stderr` for details.
+
+---
+
+## Waiting for a signal
+
+In this mode the agent waits for the specified signal or signals before exiting. This is useful when running the agent as the init process in a container.
+
+It can be run as follows:
+
+    ./agent wait-signal --signal ABRT --message "Hello world!"
+
+The `--signal` option can be repeated and the `--message` option is optional.
+
+The following signals are supported:
+
+- `ABRT`
+- `ALRM`
+- `FPE`
+- `HUP`
+- `ILL`
+- `INT`
+- `KILL`
+- `PIPE`
+- `QUIT`
+- `SEGV`
+- `TERM`
+- `USR1`
+- `USR2`
+
+**Note:** `USR1` and `USR2` are not supported on Windows.

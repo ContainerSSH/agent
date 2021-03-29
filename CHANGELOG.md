@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.4: Added `wait-signal` feature + bugfixes
+
+This release adds the `wait-signal` feature for testing and init behavior. It also fixes a minor bug with validation.
+
 ## 0.9.3: Allow `\n` as an initial character
 
 This release allows `\n` (ASCII 10) instead of the `\0` as an initial character. This is needed because in TTY mode Kubernetes "eats" non-printable characters.

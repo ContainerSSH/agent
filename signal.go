@@ -28,37 +28,36 @@ loop:
 		switch args[0] {
 		case "--pid":
 			if len(args) < 2 {
-				usage("--pid requires an argument", true)
+				usage("--pid requires an argument", true, 1, exit)
 			}
 			if pid > -1 {
-				usage("--pid is duplicate", true)
+				usage("--pid is duplicate", true, 1, exit)
 			}
 			pid, err = strconv.Atoi(args[1])
 			if err != nil || pid < 1 {
-				usage("--pid requires a positive integer argument", true)
+				usage("--pid requires a positive integer argument", true, 1, exit)
 			}
 			args = args[2:]
 		case "--signal":
 			if len(args) < 2 {
-				usage("--signal requires an argument", true)
+				usage("--signal requires an argument", true, 1, exit)
 			}
 			signalName := args[1]
 			args = args[2:]
 
 			sig, err = processSignalName(signalName)
 			if err != nil {
-				_, _ = stderr.Write([]byte(err.Error()))
-				exit(1)
+				usage(err.Error(), true, 1, exit)
 			}
 		default:
-			usage(fmt.Sprintf("unknown option: %s", args[0]), true)
+			usage(fmt.Sprintf("unknown option: %s", args[0]), true, 1, exit)
 		}
 	}
 	if pid < 0 {
-		usage("missing required --pid option", true)
+		usage("missing required --pid option", true, 1, exit)
 	}
 	if sig == nil {
-		usage("missing required --signal option", true)
+		usage("missing required --signal option", true, 1, exit)
 	}
 	process, err := findProcess(pid)
 	if err != nil {
