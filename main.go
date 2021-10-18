@@ -57,7 +57,9 @@ func main() {
 	case "wait-signal":
 		waitSignal(os.Stdout, args[2:], os.Exit)
 	case "write-file":
-		writeFile(args[2:], os.Stdin, os.Stderr, os.Exit)
+		writeFile(args[2:], os.Stdin, os.Stdout, os.Stderr, os.Exit)
+	case "forward-server":
+		forwardServer(os.Stdin, os.Stdout, os.Stderr, os.Exit)
 	case "license":
 		license(args[2:])
 	default:
