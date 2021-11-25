@@ -19,6 +19,9 @@ Currently, the agent has the following modes:
 `wait-signal`
 : Waits for a specific signal or signals before it exits.
 
+`write-file`
+: Write standard input into the given file
+
 `license`
 : This mode will print the license of the agent and exit.
 
@@ -57,6 +60,13 @@ The `--wait` flag will not launch the desired program until a byte with
 the value of `\0` or a newline (`\n`) is received on `stdin`. This byte will
 not be passed to the program and if any other byte is received the agent
 will exit to prevent data stream corruption.
+
+## Writing files
+
+The backend APIs do not support adding custom files on the fly in containers.
+So the `write-file` mode was created. The mode takes just one argument, the
+name and path of the file to write. The contents of the file will be read from
+standard input
 
 ## Reporting PID
 
