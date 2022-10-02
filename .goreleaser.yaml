@@ -75,4 +75,4 @@ release:
     name: agent
   prerelease: auto
   extra_files:
-    - glob: LICENSE.md
+    - glob: LICENSE
