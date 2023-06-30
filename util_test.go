@@ -20,7 +20,7 @@ type execData struct {
 }
 
 // exec panics with the execData structure to emulate executing a program and replacing the current process image.
-func exec(argv0 string, argv []string, envv []string) (err error) {
+func fakeExec(argv0 string, argv []string, envv []string) (err error) {
 	panic(execData{
 		argv0: argv0,
 		argv:  argv,

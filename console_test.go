@@ -30,7 +30,7 @@ func TestExec(t *testing.T) {
 		}
 	}()
 
-	console(stdin, stdout, stderr, []string{"--", "test"}, exec, exit)
+	console(stdin, stdout, stderr, []string{"--", "test"}, fakeExec, exit)
 	t.FailNow()
 }
 
@@ -61,7 +61,7 @@ func TestExecWithParams(t *testing.T) {
 		}
 	}()
 
-	console(stdin, stdout, stderr, []string{"--", "test", "test1", "test2"}, exec, exit)
+	console(stdin, stdout, stderr, []string{"--", "test", "test1", "test2"}, fakeExec, exit)
 	t.FailNow()
 }
 
@@ -87,7 +87,7 @@ func TestExecWithEnv(t *testing.T) {
 		t.FailNow()
 	}()
 
-	console(stdin, stdout, stderr, []string{"--env", "FOO=bar", "--", "test"}, exec, exit)
+	console(stdin, stdout, stderr, []string{"--env", "FOO=bar", "--", "test"}, fakeExec, exit)
 	t.FailNow()
 }
 
@@ -124,7 +124,7 @@ func TestExecWait(t *testing.T) {
 		<-exitSignal
 	}()
 
-	console(stdin, stdout, stderr, []string{"--wait", "--", "test"}, exec, exit)
+	console(stdin, stdout, stderr, []string{"--wait", "--", "test"}, fakeExec, exit)
 	t.FailNow()
 }
 
@@ -161,6 +161,6 @@ func TestExecPid(t *testing.T) {
 		}
 	}()
 
-	console(stdin, stdout, stderr, []string{"--pid", "--", "test"}, exec, exit)
+	console(stdin, stdout, stderr, []string{"--pid", "--", "test"}, fakeExec, exit)
 	t.FailNow()
 }
