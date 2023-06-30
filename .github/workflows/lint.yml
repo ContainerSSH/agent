@@ -18,7 +18,7 @@ jobs:
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.42
+          version: v1.53
           args: -E asciicheck -E bodyclose -E dupl -E errorlint -E exportloopref -E funlen
           skip-pkg-cache: true
           skip-build-cache: true

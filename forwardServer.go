@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -19,7 +20,7 @@ const (
 
 func serveConnection(log log.Logger, from io.ReadWriteCloser, to io.ReadWriteCloser) {
 	_, err := io.Copy(from, to)
-	if err != nil && err != io.EOF {
+	if err != nil && errors.Is(err, io.EOF) {
 		log.Warning("Connection error", err)
 	}
 	from.Close()
@@ -69,7 +70,13 @@ func parsePort(proto string, host string, port uint32) string {
 	}
 }
 
-func localForward(log log.Logger, forwardCtx *proto.ForwardCtx, connChan chan *proto.Connection, setup proto.SetupPacket) {
+//nolint:funlen
+func localForward(
+	log log.Logger,
+	forwardCtx *proto.ForwardCtx,
+	connChan chan *proto.Connection,
+	setup proto.SetupPacket,
+) {
 	listenAddr := parsePort(setup.Protocol, setup.BindHost, setup.BindPort)
 
 	sock, err := net.Listen(setup.Protocol, listenAddr)
@@ -85,7 +92,7 @@ func localForward(log log.Logger, forwardCtx *proto.ForwardCtx, connChan chan *p
 				sock.Close()
 				break
 			}
-			conn.Reject()
+			_ = conn.Reject()
 		}
 	}()
 
@@ -151,7 +158,7 @@ func externalDial(log log.Logger, forwardCtx *proto.ForwardCtx, connChan chan *p
 		case "unix":
 			protocol = "unix"
 		default:
-			panic(fmt.Errorf("Unknown protocol %s", details.Protocol))
+			panic(fmt.Errorf("unknown protocol %s", details.Protocol))
 		}
 		log.Warning(fmt.Sprintf("Dialing %s %s:%d", setup.Protocol, details.ConnectedAddress, details.ConnectedPort))
 
@@ -160,10 +167,14 @@ func externalDial(log log.Logger, forwardCtx *proto.ForwardCtx, connChan chan *p
 		conn, err := net.Dial(protocol, dialAddr)
 		if err != nil {
 			log.Warning("Failed to dial %s", dialAddr, err)
-			agentCon.Reject()
+			_ = agentCon.Reject()
 			continue
 		}
-		agentCon.Accept()
+		err = agentCon.Accept()
+		if err != nil {
+			log.Warning("Failed to accept connection", err)
+			continue
+		}
 		go serveConnection(log, conn, agentCon)
 		go serveConnection(log, agentCon, conn)
 	}
