@@ -8,9 +8,9 @@ import (
 	"os/exec"
 	"strconv"
 
-	proto "github.com/containerssh/libcontainerssh/agentprotocol"
-	config "github.com/containerssh/libcontainerssh/config"
-	log "github.com/containerssh/libcontainerssh/log"
+	proto "go.containerssh.io/libcontainerssh/agentprotocol"
+	config "go.containerssh.io/libcontainerssh/config"
+	log "go.containerssh.io/libcontainerssh/log"
 )
 
 const (
@@ -133,7 +133,7 @@ func localForward(log log.Logger, forwardCtx *proto.ForwardCtx, connChan chan *p
 			break
 		}
 	}
-	
+
 	forwardCtx.WaitFinish()
 }
 
@@ -185,11 +185,7 @@ func forwardServer(stdin io.Reader, stdout io.Writer, stderr io.Writer, exit exi
 	}
 
 	log.Debug("Starting agent")
-	forwardCtx := proto.ForwardCtx{
-		FromBackend: stdin,
-		ToBackend:   stdout,
-		Logger:      log,
-	}
+	forwardCtx := proto.NewForwardCtx(stdin, stdout, log)
 
 	conType, setup, connChan, err := forwardCtx.StartClient()
 	if err != nil {
@@ -203,10 +199,10 @@ func forwardServer(stdin io.Reader, stdout io.Writer, stderr io.Writer, exit exi
 	case proto.CONNECTION_TYPE_SOCKET_FORWARD:
 		fallthrough
 	case proto.CONNECTION_TYPE_PORT_FORWARD:
-		localForward(log, &forwardCtx, connChan, setup)
+		localForward(log, forwardCtx, connChan, setup)
 	case proto.CONNECTION_TYPE_SOCKET_DIAL:
 		fallthrough
 	case proto.CONNECTION_TYPE_PORT_DIAL:
-		externalDial(log, &forwardCtx, connChan, setup)
+		externalDial(log, forwardCtx, connChan, setup)
 	}
 }
