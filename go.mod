@@ -1,6 +1,6 @@
 module go.containerssh.io/agent
 
-go 1.18
+go 1.23
 
 require go.containerssh.io/libcontainerssh v0.5.1
 
