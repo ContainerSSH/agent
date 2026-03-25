@@ -9,9 +9,9 @@ import (
 	"os/exec"
 	"strconv"
 
-	proto "go.containerssh.io/libcontainerssh/agentprotocol"
-	config "go.containerssh.io/libcontainerssh/config"
-	log "go.containerssh.io/libcontainerssh/log"
+	proto "go.containerssh.io/containerssh/agentprotocol"
+	config "go.containerssh.io/containerssh/config"
+	log "go.containerssh.io/containerssh/log"
 )
 
 const (
