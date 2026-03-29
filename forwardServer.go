@@ -12,6 +12,7 @@ import (
 	proto "go.containerssh.io/libcontainerssh/agentprotocol"
 	config "go.containerssh.io/libcontainerssh/config"
 	log "go.containerssh.io/libcontainerssh/log"
+	message "go.containerssh.io/libcontainerssh/message"
 )
 
 const (
@@ -155,12 +156,12 @@ func externalDial(log log.Logger, forwardCtx *proto.ForwardCtx, connChan chan *p
 		switch details.Protocol {
 		case proto.PROTOCOL_TCP:
 			protocol = "tcp"
-		case "unix":
+		case proto.PROTOCOL_UNIX:
 			protocol = "unix"
 		default:
 			panic(fmt.Errorf("unknown protocol %s", details.Protocol))
 		}
-		log.Warning(fmt.Sprintf("Dialing %s %s:%d", setup.Protocol, details.ConnectedAddress, details.ConnectedPort))
+		log.Debug(message.NewMessage(message.MAgentDialing, "Dialing %s %s:%d", protocol, details.ConnectedAddress, details.ConnectedPort))
 
 		dialAddr := parsePort(protocol, details.ConnectedAddress, details.ConnectedPort)
 
@@ -182,6 +183,71 @@ func externalDial(log log.Logger, forwardCtx *proto.ForwardCtx, connChan chan *p
 	forwardCtx.WaitFinish()
 }
 
+func sshAgentForward(log log.Logger, forwardCtx *proto.ForwardCtx, connChan chan *proto.Connection, setup proto.SetupPacket) {
+	socketPath := setup.BindHost
+	if socketPath == "" {
+		socketPath = "/tmp/ssh-agent.sock"
+	}
+
+	log.Debug(message.NewMessage(message.MAgentSocketSetup, "Setting up SSH agent socket at: %s", socketPath))
+
+	_ = os.Remove(socketPath)
+
+	sock, err := net.Listen("unix", socketPath)
+	if err != nil {
+		log.Error("Failed to create SSH agent socket", err)
+		return
+	}
+	defer sock.Close()
+	defer os.Remove(socketPath)
+
+	err = os.Chmod(socketPath, 0600)
+	if err != nil {
+		log.Warning("Failed to set socket permissions", err)
+	}
+
+	log.Debug(message.NewMessage(message.MAgentSocketListening, "SSH agent socket listening on: %s", socketPath))
+
+	go func() {
+		for {
+			conn, ok := <-connChan
+			if !ok {
+				log.Debug(message.NewMessage(message.MAgentChannelClosed, "SSH agent connection channel closed, stopping listener"))
+				sock.Close()
+				break
+			}
+			_ = conn.Reject()
+		}
+	}()
+
+	for {
+		conn, err := sock.Accept()
+		if err != nil {
+			log.Debug(message.NewMessage(message.EAgentSocketAcceptFailed, "SSH agent socket accept failed (likely shutdown): %v", err))
+			break
+		}
+
+		log.Debug(message.NewMessage(message.MAgentConnectionAccepted, "Accepted SSH agent connection from container process"))
+
+		agentCon, err := forwardCtx.NewConnectionUnix(
+			socketPath,
+			func() error {
+				return conn.Close()
+			},
+		)
+		if err != nil {
+			log.Warning("Failed to create SSH agent connection to host", err)
+			conn.Close()
+			continue
+		}
+
+		go serveConnection(log, conn, agentCon)
+		go serveConnection(log, agentCon, conn)
+	}
+
+	forwardCtx.WaitFinish()
+}
+
 func forwardServer(stdin io.Reader, stdout io.Writer, stderr io.Writer, exit exitFunc) {
 	logConfig := config.LogConfig{
 		Level:       config.LogLevelDebug,
@@ -195,7 +261,7 @@ func forwardServer(stdin io.Reader, stdout io.Writer, stderr io.Writer, exit exi
 		panic(err)
 	}
 
-	log.Debug("Starting agent")
+	log.Debug(message.NewMessage(message.MAgentStarting, "Starting agent"))
 	forwardCtx := proto.NewForwardCtx(stdin, stdout, log)
 
 	conType, setup, connChan, err := forwardCtx.StartClient()
@@ -215,5 +281,7 @@ func forwardServer(stdin io.Reader, stdout io.Writer, stderr io.Writer, exit exi
 		fallthrough
 	case proto.CONNECTION_TYPE_PORT_DIAL:
 		externalDial(log, forwardCtx, connChan, setup)
+	case proto.CONNECTION_TYPE_SSH_AGENT:
+		sshAgentForward(log, forwardCtx, connChan, setup)
 	}
 }
