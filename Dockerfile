@@ -1,2 +1,3 @@
 FROM scratch
-COPY containerssh-agent /usr/bin/containerssh-agent
+ARG TARGETPLATFORM
+COPY $TARGETPLATFORM/containerssh-agent /usr/bin/containerssh-agent
