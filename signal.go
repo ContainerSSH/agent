@@ -61,11 +61,11 @@ loop:
 	}
 	process, err := findProcess(pid)
 	if err != nil {
-		_, _ = stderr.Write([]byte(fmt.Sprintf("process not found (%v)", err)))
+		_, _ = fmt.Fprintf(stderr, "process not found (%v)", err)
 		exit(2)
 	}
 	if err := process.Signal(sig); err != nil {
-		_, _ = stderr.Write([]byte(fmt.Sprintf("failed to send signal (%v)", err)))
+		_, _ = fmt.Fprintf(stderr, "failed to send signal (%v)", err)
 		exit(3)
 	}
 	exit(0)
