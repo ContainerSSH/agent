@@ -16,10 +16,10 @@ func TestExec(t *testing.T) {
 
 	defer func() {
 		execData := recover().(execData)
-		if "test" != execData.argv0 {
+		if execData.argv0 != "test" {
 			t.FailNow()
 		}
-		if "test" != execData.argv[0] {
+		if execData.argv[0] != "test" {
 			t.FailNow()
 		}
 		if len(execData.argv) != 1 {
@@ -41,7 +41,7 @@ func TestExecWithParams(t *testing.T) {
 
 	defer func() {
 		execData := recover().(execData)
-		if "test" != execData.argv0 {
+		if execData.argv0 != "test" {
 			t.FailNow()
 		}
 		if len(execData.argv) != 3 {
@@ -72,7 +72,7 @@ func TestExecWithEnv(t *testing.T) {
 
 	defer func() {
 		execData := recover().(execData)
-		if "test" != execData.argv0 {
+		if execData.argv0 != "test" {
 			t.FailNow()
 		}
 		if len(execData.argv) != 1 {
@@ -100,7 +100,7 @@ func TestExecWait(t *testing.T) {
 
 	defer func() {
 		execData := recover().(execData)
-		if "test" != execData.argv0 {
+		if execData.argv0 != "test" {
 			t.FailNow()
 		}
 		if len(execData.argv) != 1 {
@@ -135,7 +135,7 @@ func TestExecPid(t *testing.T) {
 
 	defer func() {
 		execData := recover().(execData)
-		if "test" != execData.argv0 {
+		if execData.argv0 != "test" {
 			t.FailNow()
 		}
 		if len(execData.argv) != 1 {

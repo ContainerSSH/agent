@@ -23,8 +23,8 @@ func serveConnection(log log.Logger, from io.ReadWriteCloser, to io.ReadWriteClo
 	if err != nil && errors.Is(err, io.EOF) {
 		log.Warning("Connection error", err)
 	}
-	from.Close()
-	to.Close()
+	_ = from.Close()
+	_ = to.Close()
 }
 
 func checkCreateXAuthority() error {
@@ -89,7 +89,7 @@ func localForward(
 		for {
 			conn, ok := <-connChan
 			if !ok {
-				sock.Close()
+				_ = sock.Close()
 				break
 			}
 			_ = conn.Reject()
