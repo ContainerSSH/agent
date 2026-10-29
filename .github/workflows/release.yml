@@ -1,8 +1,8 @@
 name: Release
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main
   pull_request:
 permissions:
   contents: write
