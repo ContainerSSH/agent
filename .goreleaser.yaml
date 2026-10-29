@@ -11,6 +11,7 @@ builds:
       - windows
     goarch:
       - amd64
+      - arm64
     env:
       - CGO_ENABLED=0
 archives:
@@ -57,13 +58,17 @@ nfpms:
     formats:
       - apk
     bindir: /usr/bin
-dockers:
-  - image_templates:
-      - "containerssh/agent:latest"
-      - "containerssh/agent:{{ .Tag }}"
-      - "quay.io/containerssh/agent:latest"
-      - "quay.io/containerssh/agent:{{ .Tag }}"
+dockers_v2:
+  - images:
+      - "containerssh/agent"
+      - "quay.io/containerssh/agent"
+    tags:
+      - "latest"
+      - "{{ .Tag }}"
     dockerfile: Dockerfile
+    platforms:
+      - linux/amd64
+      - linux/arm64
 source:
   enabled: true
   name_template: 'containerssh-agent-{{ .Version }}-source'
