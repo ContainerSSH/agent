@@ -1,3 +1,4 @@
+version: 2
 before:
   hooks:
     - go generate
@@ -13,11 +14,12 @@ builds:
     env:
       - CGO_ENABLED=0
 archives:
-  - builds:
+  - ids:
       - containerssh-agent
     format_overrides:
       - goos: windows
-        format: zip
+        formats:
+          - zip
 nfpms:
   - id: deb-package
     vendor: ContainerSSH
@@ -26,7 +28,7 @@ nfpms:
     description: The guest agent for ContainerSSH, an SSH server that launches containers on demand.
     license: MIT
     package_name: containerssh-agent
-    builds:
+    ids:
       - containerssh-agent
     formats:
       - deb
@@ -38,7 +40,7 @@ nfpms:
     description: The guest agent for ContainerSSH, an SSH server that launches containers on demand.
     license: MIT
     package_name: containerssh-agent
-    builds:
+    ids:
       - containerssh-agent
     formats:
       - rpm
@@ -50,7 +52,7 @@ nfpms:
     description: The guest agent for ContainerSSH, an SSH server that launches containers on demand.
     license: MIT
     package_name: containerssh-agent
-    builds:
+    ids:
       - containerssh-agent
     formats:
       - apk
